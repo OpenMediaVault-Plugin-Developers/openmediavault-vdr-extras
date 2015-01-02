@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# Copyright (C) 2014 OpenMediaVault Plugin Developers
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
+OMV_VDR_PLUGINS_ORDER_CONF="/etc/vdr/plugins/order.conf"
+
+OMV_VDR_EXTRAS_LIVE_CONF="/etc/vdr/plugins/plugin.live.conf"
+OMV_VDR_EXTRAS_PLUGIN_XPATH="/config/services/vdrextras"
+
+enable_disable_plugin()
+{
+    enable=${1}
+    key=${2}
+
+    if [ ${enable} -eq 1 ]; then
+        sed -i "/-${key}/d" ${OMV_VDR_PLUGINS_ORDER_CONF}
+    else
+        if ! grep -q "${key}" ${OMV_VDR_PLUGINS_ORDER_CONF}; then
+            echo "-${key}" >> ${OMV_VDR_PLUGINS_ORDER_CONF}
+        fi
+    fi
+}
+
+generate_setup_conf()
+{
+    local streamdev_enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/enable")
+    local streamdev_port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/port")
+
+    if [ ${streamdev_enable} -eq 1 ]; then
+        cat <<EOF >> ${OMV_VDR_SETUP_CONF}
+live.StreamdevPort = ${streamdev_port}
+EOF
+    fi
+}
+
+generate_live_conf()
+{
+    local enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/enable")
+    local port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/port")
+
+    cat <<EOF > ${OMV_VDR_EXTRAS_LIVE_CONF}
+#
+# Command line parameters for vdr-plugin-live
+#
+# For more details see:
+#   - /usr/share/doc/vdr-plugin-live/README
+#   - \`vdr --help -Plive\`
+
+--port=${port}
+--ip=0.0.0.0
+--log=INFO
+--epgimages=/var/cache/vdr/epgimages
+EOF
+}
+
+enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/enable")
+
+enable_disable_plugin ${enable} "live"
+
+if [ ${enable} -eq 0 ]; then
+    exit 0
+fi
+
+generate_setup_conf
+generate_live_conf

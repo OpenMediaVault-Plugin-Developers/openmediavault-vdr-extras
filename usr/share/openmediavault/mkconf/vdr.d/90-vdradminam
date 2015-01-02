@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# Copyright (C) 2014 OpenMediaVault Plugin Developers
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
+OMV_VDR_PLUGINS_ORDER_CONF="/etc/vdr/plugins/order.conf"
+
+OMV_VDR_EXTRAS_VDRADMINAM_CONF="/var/lib/vdradmin-am/vdradmind.conf"
+OMV_VDR_EXTRAS_VDRADMINAM_DEFAULT_CONF="/etc/default/vdradmin-am"
+OMV_VDR_EXTRAS_PLUGIN_XPATH="/config/services/vdrextras"
+
+generate_vdradminam_default_conf()
+{
+    local enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/vdradminam/enable")
+
+    cat <<EOF > ${OMV_VDR_EXTRAS_VDRADMINAM_DEFAULT_CONF}
+# Defaults for vdradmin initscript
+# sourced by /etc/init.d/vdradmin-am
+# installed at /etc/default/vdradmin-am by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Should vdradmin's init-script be enabled?
+
+####################################################################
+# ATTENTION! YOU SHOULD MODIFY /var/lib/vdradmin-am/vdradmind.conf #
+# before enabling this, because the default config uses a          #
+# really simple default username/password (linvdr/linvdr)          #
+####################################################################
+
+ENABLED="${enable}"
+
+# Nicevalue to use when running vdradmin-am
+NICE="10"
+EOF
+}
+
+generate_vdradminam_conf()
+{
+    local port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/vdradminam/port")
+
+    cat <<EOF > ${OMV_VDR_EXTRAS_VDRADMINAM_CONF}
+VDR_HOST = localhost
+
+LOGLEVEL = 81
+TM_PRIORITY = 99
+AT_PRIORITY = 99
+TM_LIFETIME = 99
+AT_TIMEOUT = 10
+AT_FUNC = 0
+GUEST_ACCOUNT = 0
+CACHE_TIMEOUT = 5
+SERVERPORT = ${port}
+PASSWORD = linvdr
+AT_LIFETIME = 99
+MOD_GZIP = 1
+TM_MARGIN_END = 10
+USERNAME = linvdr
+LOGFILE = vdradmind.log
+RECORDINGS = 1
+LANGUAGE = English
+CACHE_LASTUPDATE = 0
+TM_MARGIN_BEGIN = 10
+LOGINPAGE = 0
+VDR_PORT = 6419
+ST_LIVE_ON = 0
+EOF
+}
+
+generate_vdradminam_default_conf
+generate_vdradminam_conf

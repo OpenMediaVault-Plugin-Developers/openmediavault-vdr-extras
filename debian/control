@@ -1,0 +1,16 @@
+Source: openmediavault-vdr-extras
+Section: net
+XB-Plugin-Section: multimedia
+Priority: optional
+Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
+Build-Depends: debhelper (>= 9.0.0)
+Standards-Version: 3.9.3
+
+Package: openmediavault-vdr-extras
+Architecture: all
+Depends: openmediavault (>= 1.1), openmediavault-vdr (>= 1.1),
+ vdr-plugin-epgsearch, vdr-plugin-live, vdr-plugin-streamdev-server,
+ vdr-plugin-xineliboutput, vdradmin-am, ${misc:Depends}
+Description: Extras plugin for openmediavault-vdr.
+ Provides EPGSearch, LIVE (LIVE Interactive VDR Environment),
+ Streamdev, Xineliboutput and VDRAdmin-AM.

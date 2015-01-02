@@ -1,0 +1,53 @@
+#!/bin/sh
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+case "$1" in
+    configure)
+        SERVICE_XPATH_NAME="vdrextras"
+        SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
+
+        if ! omv_config_exists "${SERVICE_XPATH}"; then
+            omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
+        fi
+
+        if ! omv_config_exists "${SERVICE_XPATH}/live"; then
+            omv_config_add_element "${SERVICE_XPATH}" "live"
+            omv_config_add_element "${SERVICE_XPATH}/live" "enable" "0"
+            omv_config_add_element "${SERVICE_XPATH}/live" "port" "8008"
+        fi
+
+        if ! omv_config_exists "${SERVICE_XPATH}/streamdev"; then
+            omv_config_add_element "${SERVICE_XPATH}" "streamdev"
+            omv_config_add_element "${SERVICE_XPATH}/streamdev" "enable" "0"
+            omv_config_add_element "${SERVICE_XPATH}/streamdev" "port" "3000"
+            omv_config_add_element "${SERVICE_XPATH}/streamdev" "allowed_hosts" "192.168.1.0/24"
+        fi
+
+        if ! omv_config_exists "${SERVICE_XPATH}/vdradminam"; then
+            omv_config_add_element "${SERVICE_XPATH}" "vdradminam"
+            omv_config_add_element "${SERVICE_XPATH}/vdradminam" "enable" "0"
+            omv_config_add_element "${SERVICE_XPATH}/vdradminam" "port" "8001"
+        fi
+
+        # Activate package triggers. These triggers are only set during the
+        # package installation.
+        dpkg-trigger update-fixperms
+        dpkg-trigger update-locale
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
