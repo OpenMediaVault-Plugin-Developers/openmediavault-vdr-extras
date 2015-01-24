@@ -16,12 +16,11 @@
  */
 
 // require("js/omv/WorkspaceManager.js")
-// require("js/omv/workspace/form/Panel.js")
+// require("js/omv/module/admin/service/vdr/extras/Base.js")
 
 Ext.define("OMV.module.admin.service.vdr.extras.Streamdev", {
-    extend: "OMV.workspace.form.Panel",
+    extend: "OMV.module.admin.service.vdr.extras.Base",
 
-    rpcService: "VdrExtras",
     rpcGetMethod: "getStreamdevSettings",
     rpcSetMethod: "setStreamdevSettings",
 
