@@ -17,9 +17,13 @@
 
 // require("js/omv/WorkspaceManager.js")
 // require("js/omv/module/admin/service/vdr/extras/Base.js")
+// require("js/omv/form/field/plugin/FieldInfo.js")
 
 Ext.define("OMV.module.admin.service.vdr.extras.Vdradminam", {
     extend: "OMV.module.admin.service.vdr.extras.Base",
+    requires: [
+        "OMV.form.field.plugin.FieldInfo"
+    ],
 
     rpcGetMethod: "getVdradminamSettings",
     rpcSetMethod: "setVdradminamSettings",
@@ -35,7 +39,11 @@ Ext.define("OMV.module.admin.service.vdr.extras.Vdradminam", {
                 xtype: "checkbox",
                 name: "enable",
                 fieldLabel: _("Enable"),
-                checked: false
+                checked: false,
+                plugins: [{
+                    ptype: "fieldinfo",
+                    text: _("The default username and password is 'linvdr' and 'linvdr'.")
+                }]
             }, {
                 xtype: "numberfield",
                 name: "port",
