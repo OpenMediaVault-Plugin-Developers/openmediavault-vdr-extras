@@ -23,7 +23,7 @@ disable_vdr_plugin()
 {
     plugin=${1}
 
-    if [ -z "${plugin}"]; then
+    if [ -z "${plugin}" ]; then
         exit 1
     fi
 
@@ -36,7 +36,7 @@ enable_vdr_plugin()
 {
     plugin=${1}
 
-    if [ -z "${plugin}"]; then
+    if [ -z "${plugin}" ]; then
         exit 1
     fi
 
