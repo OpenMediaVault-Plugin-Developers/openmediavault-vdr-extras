@@ -21,7 +21,6 @@ set -e
 . /usr/share/openmediavault/scripts/helper-functions
 
 OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
-OMV_VDR_PLUGINS_ORDER_CONF="/etc/vdr/plugins/order.conf"
 
 OMV_VDR_EXTRAS_VDRADMINAM_CONF="/var/lib/vdradmin-am/vdradmind.conf"
 OMV_VDR_EXTRAS_VDRADMINAM_DEFAULT_CONF="/etc/default/vdradmin-am"

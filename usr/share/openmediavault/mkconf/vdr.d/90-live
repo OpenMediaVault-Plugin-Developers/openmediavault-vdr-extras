@@ -19,26 +19,12 @@ set -e
 
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
+. /usr/share/openmediavault/scripts/vdr-extras-helper-functions
 
 OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
-OMV_VDR_PLUGINS_ORDER_CONF="/etc/vdr/plugins/order.conf"
 
 OMV_VDR_EXTRAS_LIVE_CONF="/etc/vdr/plugins/plugin.live.conf"
 OMV_VDR_EXTRAS_PLUGIN_XPATH="/config/services/vdrextras"
-
-enable_disable_plugin()
-{
-    enable=${1}
-    key=${2}
-
-    if [ ${enable} -eq 1 ]; then
-        sed -i "/-${key}/d" ${OMV_VDR_PLUGINS_ORDER_CONF}
-    else
-        if ! grep -q "${key}" ${OMV_VDR_PLUGINS_ORDER_CONF}; then
-            echo "-${key}" >> ${OMV_VDR_PLUGINS_ORDER_CONF}
-        fi
-    fi
-}
 
 generate_setup_conf()
 {
@@ -54,7 +40,6 @@ EOF
 
 generate_live_conf()
 {
-    local enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/enable")
     local port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/port")
 
     cat <<EOF > ${OMV_VDR_EXTRAS_LIVE_CONF}
@@ -74,11 +59,12 @@ EOF
 
 enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/enable")
 
-enable_disable_plugin ${enable} "live"
-
 if [ ${enable} -eq 0 ]; then
+    disable_vdr_plugin "live"
     exit 0
 fi
 
 generate_setup_conf
 generate_live_conf
+
+enable_vdr_plugin "live"
