@@ -51,10 +51,27 @@ EOF
 
 generate_streamdev_conf()
 {
-    local enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/enable")
     local allowed_hosts=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/allowed_hosts")
 
-    echo ${allowed_hosts} >> ${OMV_VDR_EXTRAS_STREAMDEV_HOSTS_CONF}
+    cat <<EOF > ${OMV_VDR_EXTRAS_STREAMDEV_HOSTS_CONF}
+#
+# streamdevhosts  This file describes a number of host addresses that
+#                 are allowed to connect to the streamdev server running
+#                 with the Video Disk Recorder (VDR) on this system.
+# Syntax:
+#
+# IP-Address[/Netmask]
+#
+
+127.0.0.1             # always accept localhost
+#192.168.100.0/24     # any host on the local net
+#204.152.189.113      # a specific host
+#239.255.0.0/16       # uncomment for IGMP multicast streaming
+#0.0.0.0/0            # any host on any net (DON'T DO THAT! USE AUTHENTICATION)
+
+# Allowed hosts from the OpenMediaVault VDR extras plugin.
+${allowed_hosts}
+EOF
 }
 
 enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/enable")
