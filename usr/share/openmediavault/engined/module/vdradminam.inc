@@ -19,8 +19,9 @@
 
 require_once "openmediavault/config.inc";
 require_once "openmediavault/error.inc";
-require_once "openmediavault/initscript.inc";
 require_once "openmediavault/module.inc";
+require_once "openmediavault/notify.inc";
+require_once "openmediavault/systemctl.inc";
 
 class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
     OMVINotifyListener,
@@ -31,16 +32,34 @@ class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
         return "org.openmediavault.services.vdr.extras.vdradminam";
     }
 
+    /**
+     * Get the service configuration XPath.
+     *
+     * @return string
+     */
     private function getXpath()
     {
         return "/config/services/vdrextras/vdradminam";
     }
 
+    /**
+     * Get the module name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return "vdradmin-am";
     }
 
+
+    /**
+     * Get the status of the service.
+     *
+     * @return array
+     *
+     * @throws OMVException
+     */
     public function getStatus()
     {
         global $xmlConfig;
@@ -54,26 +73,33 @@ class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
             );
         }
 
-        $initd = new OMVSysVInitScript($this->getName());
+        $systemCtl = new OMVSystemCtl($this->getName());
 
         return [
             "name" => $this->getName(),
             "title" => gettext("VDRAdmin-AM"),
             "enabled" => boolval($object["enable"]),
-            "running" => $initd->status() == 0
+            "running" => $systemCtl->isActive()
         ];
     }
 
     public function shouldStart()
     {
-        return array("vdr");
+        return ["vdr"];
     }
 
     public function shouldStop()
     {
-        return array("vdr");
+        return ["vdr"];
     }
 
+    /**
+     * Start the managed service.
+     *
+     * @return void
+     *
+     * @throws OMVException
+     */
     public function startService()
     {
         global $xmlConfig;
@@ -91,16 +117,27 @@ class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
             return;
         }
 
-        $initd = new OMVSysVInitScript($this->getName(), true);
-        $initd->exec();
+        $systemCtl = new OMVSystemCtl($this->getName());
+        $systemCtl->enable(true);
     }
 
+    /**
+     * Stop the managed service.
+     *
+     * @return void
+     */
     public function stopService()
     {
-        $initd = new OMVSysVInitScript($this->getName());
-        $initd->exec();
+        $systemCtl = new OMVSystemCtl($this->getName());
+        $systemCtl->disable(true);
     }
 
+    /**
+     * Bind listeners.
+     *
+     * @param OMVNotifyDispatcher $dispatcher
+     * @return void
+     */
     public function bindListeners(OMVNotifyDispatcher $dispatcher)
     {
         $dispatcher->addListener(
