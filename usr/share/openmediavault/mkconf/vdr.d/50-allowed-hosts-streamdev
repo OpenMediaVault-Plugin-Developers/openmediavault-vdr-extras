@@ -19,27 +19,13 @@ set -e
 
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
-. /usr/share/openmediavault/scripts/vdr-extras-helper-functions
 
-OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
-
+OMV_VDR_EXTRAS_XPATH="/config/services/vdrextras"
 OMV_VDR_EXTRAS_STREAMDEV_HOSTS_CONF="/etc/vdr/plugins/streamdevhosts.conf"
-OMV_VDR_EXTRAS_PLUGIN_XPATH="/config/services/vdrextras"
 
-generate_setup_conf()
-{
-    local streamdev_port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/port")
+allowed_hosts=$(omv_config_get "${OMV_VDR_EXTRAS_XPATH}/streamdev/allowed_hosts")
 
-    cat <<EOF >> ${OMV_VDR_SETUP_CONF}
-streamdev-server.HTTPServerPort = ${streamdev_port}
-EOF
-}
-
-generate_streamdev_conf()
-{
-    local allowed_hosts=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/allowed_hosts")
-
-    cat <<EOF > ${OMV_VDR_EXTRAS_STREAMDEV_HOSTS_CONF}
+cat <<EOF > ${OMV_VDR_EXTRAS_STREAMDEV_HOSTS_CONF}
 #
 # streamdevhosts  This file describes a number of host addresses that
 #                 are allowed to connect to the streamdev server running
@@ -58,16 +44,3 @@ generate_streamdev_conf()
 # Allowed hosts from the OpenMediaVault VDR extras plugin.
 ${allowed_hosts}
 EOF
-}
-
-enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/enable")
-
-if [ ${enable} -eq 0 ]; then
-    disable_vdr_plugin "streamdev-server"
-    exit 0
-fi
-
-generate_setup_conf
-generate_streamdev_conf
-
-enable_vdr_plugin "streamdev-server"

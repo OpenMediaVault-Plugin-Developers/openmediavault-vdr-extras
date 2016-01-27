@@ -19,30 +19,13 @@ set -e
 
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
-. /usr/share/openmediavault/scripts/vdr-extras-helper-functions
 
-OMV_VDR_SETUP_CONF="/etc/vdr/setup.conf"
-
+OMV_VDR_EXTRAS_XPATH="/config/services/vdrextras"
 OMV_VDR_EXTRAS_LIVE_CONF="/etc/vdr/plugins/plugin.live.conf"
-OMV_VDR_EXTRAS_PLUGIN_XPATH="/config/services/vdrextras"
 
-generate_setup_conf()
-{
-    local streamdev_enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/enable")
-    local streamdev_port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/streamdev/port")
+port=$(omv_config_get "${OMV_VDR_EXTRAS_XPATH}/live/port")
 
-    if [ ${streamdev_enable} -eq 1 ]; then
-        cat <<EOF >> ${OMV_VDR_SETUP_CONF}
-live.StreamdevPort = ${streamdev_port}
-EOF
-    fi
-}
-
-generate_live_conf()
-{
-    local port=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/port")
-
-    cat <<EOF > ${OMV_VDR_EXTRAS_LIVE_CONF}
+cat <<EOF > ${OMV_VDR_EXTRAS_LIVE_CONF}
 #
 # Command line parameters for vdr-plugin-live
 #
@@ -55,16 +38,3 @@ generate_live_conf()
 --log=INFO
 --epgimages=/var/cache/vdr/epgimages
 EOF
-}
-
-enable=$(omv_config_get "${OMV_VDR_EXTRAS_PLUGIN_XPATH}/live/enable")
-
-if [ ${enable} -eq 0 ]; then
-    disable_vdr_plugin "live"
-    exit 0
-fi
-
-generate_setup_conf
-generate_live_conf
-
-enable_vdr_plugin "live"

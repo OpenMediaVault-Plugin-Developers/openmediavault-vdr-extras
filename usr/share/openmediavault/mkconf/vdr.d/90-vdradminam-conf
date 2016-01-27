@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Copyright (C) 2014 OpenMediaVault Plugin Developers
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+OMV_VDR_EXTRAS_XPATH="/config/services/vdrextras"
+OMV_VDR_EXTRAS_VDRADMINAM_CONF="/etc/vdradmin-am/vdradmind.conf"
+
+port=$(omv_config_get "${OMV_VDR_EXTRAS_XPATH}/vdradminam/port")
+
+cat <<EOF > ${OMV_VDR_EXTRAS_VDRADMINAM_CONF}
+VDR_HOST = localhost
+
+LOGLEVEL = 81
+TM_PRIORITY = 99
+AT_PRIORITY = 99
+TM_LIFETIME = 99
+AT_TIMEOUT = 10
+AT_FUNC = 0
+GUEST_ACCOUNT = 0
+CACHE_TIMEOUT = 5
+SERVERPORT = ${port}
+PASSWORD = linvdr
+AT_LIFETIME = 99
+MOD_GZIP = 1
+TM_MARGIN_END = 10
+USERNAME = linvdr
+LOGFILE = vdradmind.log
+RECORDINGS = 1
+LANGUAGE = English
+CACHE_LASTUPDATE = 0
+TM_MARGIN_BEGIN = 10
+LOGINPAGE = 0
+VDR_PORT = 6419
+ST_LIVE_ON = 0
+EOF
