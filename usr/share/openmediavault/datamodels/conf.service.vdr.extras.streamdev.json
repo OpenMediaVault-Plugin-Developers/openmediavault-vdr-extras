@@ -1,0 +1,25 @@
+{
+    "type": "config",
+    "id": "conf.service.vdr.extras.streamdev",
+    "title": "VDR Streamdev",
+    "queryinfo": {
+        "xpath": "/config/services/vdrextras/streamdev",
+        "iterable": false
+    },
+    "properties": {
+        "enable": {
+            "type": "boolean",
+            "default": false
+        },
+        "port": {
+            "type": "integer",
+            "minimum": 1024,
+            "maximum": 65535,
+            "default": 3000
+        },
+        "allowed_hosts": {
+            "type": "string",
+            "default": "192.168.1.0/24"
+        }
+    }
+}

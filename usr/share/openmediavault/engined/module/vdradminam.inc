@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2014 OpenMediaVault Plugin Developers
+ * Copyright (C) 2014 OpenMediaVault Plugin Developers.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once "openmediavault/config.inc";
-require_once "openmediavault/error.inc";
-require_once "openmediavault/module.inc";
-require_once "openmediavault/notify.inc";
-require_once "openmediavault/systemctl.inc";
+namespace OMV\Engined\Module;
 
-class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
-    OMVINotifyListener,
-    OMVIModuleServiceStatus
+use OMV\Config\Database;
+use OMV\Engine\Module\IServiceStatus;
+use OMV\Engine\Module\ServiceAbstract;
+use OMV\Engine\Notify\Dispatcher;
+use OMV\Engine\Notify\IListener;
+use OMV\System\SystemCtl;
+
+class Vdradminam extends ServiceAbstract implements
+    IListener,
+    IServiceStatus
 {
-    private function getEventMessagePath()
-    {
-        return "org.openmediavault.services.vdr.extras.vdradminam";
-    }
+    /** @var Database */
+    private $database;
 
-    /**
-     * Get the service configuration XPath.
-     *
-     * @return string
-     */
-    private function getXpath()
+    /** @var string */
+    private $dataModelPath = 'conf.service.vdr.extras.vdradminam';
+
+    /** @var string */
+    private $eventMessagePath = 'org.openmediavault.services.vdr.extras.vdradminam';
+
+    /** @var string */
+    private $serviceName = 'vdradmin-am.service';
+
+    public function __construct(Database $database = null)
     {
-        return "/config/services/vdrextras/vdradminam";
+        $this->database = $database ? $database : Database::getInstance();
     }
 
     /**
@@ -49,76 +54,50 @@ class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
      */
     public function getName()
     {
-        return "vdradmin-am";
+        return 'vdradmin-am';
     }
 
-
     /**
-     * Get the status of the service.
+     * Get the module status.
      *
      * @return array
-     *
-     * @throws OMVException
      */
     public function getStatus()
     {
-        global $xmlConfig;
-
-        $object = $xmlConfig->get($this->getXpath());
-
-        if (is_null($object)) {
-            throw new OMVException(
-                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $this->getXpath()
-            );
-        }
-
-        $systemCtl = new OMVSystemCtl($this->getName());
+        $object = $this->database->get($this->dataModelPath);
+        $systemCtl = new SystemCtl($this->serviceName);
 
         return [
-            "name" => $this->getName(),
-            "title" => gettext("VDRAdmin-AM"),
-            "enabled" => boolval($object["enable"]),
-            "running" => $systemCtl->isActive()
+            'name' => $this->getName(),
+            'title' => gettext('VDRAdmin-AM'),
+            'enabled' => $object->get('enable'),
+            'running' => $systemCtl->isActive(),
         ];
     }
 
     public function shouldStart()
     {
-        return ["vdr"];
+        return ['vdr'];
     }
 
     public function shouldStop()
     {
-        return ["vdr"];
+        return ['vdr'];
     }
 
     /**
      * Start the managed service.
      *
      * @return void
-     *
-     * @throws OMVException
      */
     public function startService()
     {
-        global $xmlConfig;
+        $object = $this->database->get($this->dataModelPath);
 
-        $object = $xmlConfig->get($this->getXpath());
-
-        if (is_null($object)) {
-            throw new OMVException(
-                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $this->getXpath()
-            );
+        if ($object->get('enable')) {
+            $systemCtl = new SystemCtl($this->serviceName);
+            $systemCtl->enable(true);
         }
-
-        if (!boolval($object["enable"])) {
-            return;
-        }
-
-        $systemCtl = new OMVSystemCtl($this->getName());
-        $systemCtl->enable(true);
     }
 
     /**
@@ -128,26 +107,22 @@ class OMVModuleVdradminam extends OMVModuleServiceAbstract implements
      */
     public function stopService()
     {
-        $systemCtl = new OMVSystemCtl($this->getName());
+        $systemCtl = new SystemCtl($this->serviceName);
         $systemCtl->disable(true);
     }
 
     /**
      * Bind listeners.
      *
-     * @param OMVNotifyDispatcher $dispatcher
+     * @param Dispatcher $dispatcher
      * @return void
      */
-    public function bindListeners(OMVNotifyDispatcher $dispatcher)
+    public function bindListeners(Dispatcher $dispatcher)
     {
         $dispatcher->addListener(
             OMV_NOTIFY_MODIFY,
-            $this->getEventMessagePath(),
-            [$this, "setDirty"]
+            $this->eventMessagePath,
+            [$this, 'setDirty']
         );
     }
 }
-
-// Register the Module
-$moduleMgr = &OMVModuleMgr::getInstance();
-$moduleMgr->registerModule(new OMVModuleVdradminam());

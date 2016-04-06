@@ -1,0 +1,59 @@
+[{
+    "type": "rpc",
+    "id": "rpc.vdr.extras.setlivesettings",
+    "params": {
+        "type": "object",
+        "properties": {
+            "enable": {
+                "type": "boolean",
+                "required": true
+            },
+            "port": {
+                "type": "integer",
+                "minimum": 1024,
+                "maximum": 65535,
+                "required": true
+            }
+        }
+    }
+}, {
+    "type": "rpc",
+    "id": "rpc.vdr.extras.setstreamdevsettings",
+    "params": {
+        "type": "object",
+        "properties": {
+            "enable": {
+                "type": "boolean",
+                "required": true
+            },
+            "port": {
+                "type": "integer",
+                "minimum": 1024,
+                "maximum": 65535,
+                "required": true
+            },
+            "allowed_hosts": {
+                "type": "string",
+                "required": true
+            }
+        }
+    }
+}, {
+    "type": "rpc",
+    "id": "rpc.vdr.extras.setvdradminamsettings",
+    "params": {
+        "type": "object",
+        "properties": {
+            "enable": {
+                "type": "boolean",
+                "required": true
+            },
+            "port": {
+                "type": "integer",
+                "minimum": 1024,
+                "maximum": 65535,
+                "required": true
+            }
+        }
+    }
+}]

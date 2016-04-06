@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2014 OpenMediaVault Plugin Developers
+ * Copyright (C) 2014 OpenMediaVault Plugin Developers.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,248 +17,169 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once "openmediavault/config.inc";
-require_once "openmediavault/error.inc";
-require_once "openmediavault/notify.inc";
-require_once "openmediavault/rpcservice.inc";
+namespace OMV\Engined\Rpc;
 
-class OMVRpcServiceVdrExtras extends OMVRpcServiceAbstract
+use OMV\Config\Database;
+use OMV\Engine\Notify\Dispatcher;
+use OMV\Rpc\ServiceAbstract;
+
+class VdrExtras extends ServiceAbstract
 {
-    private function getVdrEventMessagePath()
+    /** @var Database */
+    private $database;
+
+    /** @var Dispatcher */
+    private $dispatcher;
+
+    /** @var string */
+    private $eventMessagePath = 'org.openmediavault.services.vdr';
+
+    /** @var string */
+    private $liveDataModelPath = 'conf.service.vdr.extras.live';
+
+    /** @var string */
+    private $streamdevDataModelPath = 'conf.service.vdr.extras.streamdev';
+
+    /** @var string */
+    private $vdradminamDataModelPath = 'conf.service.vdr.extras.vdradminam';
+
+    /** @var string */
+    private $vdradminamEventMessagePath = 'org.openmediavault.services.vdr.extras.vdradminam';
+
+    public function __construct(Database $database = null, Dispatcher $dispatcher = null)
     {
-        return "org.openmediavault.services.vdr";
+        $this->database = $database ? $database : Database::getInstance();
+        $this->dispatcher = $dispatcher ? $dispatcher : Dispatcher::getInstance();
     }
 
-    private function getVdradminamEventMessagePath()
-    {
-        return "org.openmediavault.services.vdr.extras.vdradminam";
-    }
-
-    private function getXpath()
-    {
-        return "/config/services/vdrextras";
-    }
-
-    private function getLiveXpath()
-    {
-        return sprintf("%s/live", $this->getXpath());
-    }
-
-    private function getStreamdevXpath()
-    {
-        return sprintf("%s/streamdev", $this->getXpath());
-    }
-
-    private function getVdradminamXpath()
-    {
-        return sprintf("%s/vdradminam", $this->getXpath());
-    }
-
+    /**
+     * Get the name of the RPC service.
+     *
+     * @return string
+     */
     public function getName()
     {
-        return "VdrExtras";
+        return 'VdrExtras';
     }
 
+    /**
+     * Initialize the RPC service.
+     *
+     * @return void
+     */
     public function initialize()
     {
-        $this->registerMethod("getLiveSettings");
-        $this->registerMethod("setLiveSettings");
-        $this->registerMethod("getStreamdevSettings");
-        $this->registerMethod("setStreamdevSettings");
-        $this->registerMethod("getVdradminamSettings");
-        $this->registerMethod("setVdradminamSettings");
+        $this->registerMethod('getLiveSettings');
+        $this->registerMethod('setLiveSettings');
+        $this->registerMethod('getStreamdevSettings');
+        $this->registerMethod('setStreamdevSettings');
+        $this->registerMethod('getVdradminamSettings');
+        $this->registerMethod('setVdradminamSettings');
     }
 
+    /**
+     * Get the Live settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function getLiveSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->liveDataModelPath);
 
-        // Get the configuration object
-        $object = $this->load($this->getLiveXpath());
-
-        $object["enable"] = boolval($object["enable"]);
-        $object["port"] = intval($object["port"]);
-
-        return $object;
+        return $object->getAssoc();
     }
 
+    /**
+     * Set the Live settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function setLiveSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
+        $this->validateMethodParams($params, 'rpc.vdr.extras.setlivesettings');
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->liveDataModelPath);
+        $object->setAssoc($params);
 
-        // Validate the parameters of the RPC service method.
-        $this->validateMethodParams(
-            $params,
-            '{
-                "type": "object",
-                "properties": {
-                    "enable": { "type": "boolean" },
-                    "port": { "type": "integer", "minimum": 1024, "maximum": 65535 }
-                }
-            }'
-        );
-
-        $object = [
-            "enable" => boolval($params["enable"]),
-            "port" => intval($params["port"]),
-        ];
-
-        $this->save($object, $this->getLiveXpath());
-
-        return $object;
+        $this->database->set($object);
+        $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->eventMessagePath);
     }
 
+    /**
+     * Get the Streamdev settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function getStreamdevSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->streamdevDataModelPath);
 
-        // Get the configuration object
-        $object = $this->load($this->getStreamdevXpath());
-
-        $object["enable"] = boolval($object["enable"]);
-        $object["port"] = intval($object["port"]);
-
-        return $object;
+        return $object->getAssoc();
     }
 
+    /**
+     * Set the Streamdev settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function setStreamdevSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
+        $this->validateMethodParams($params, 'rpc.vdr.extras.setstreamdevsettings');
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->streamdevDataModelPath);
+        $object->setAssoc($params);
 
-        // Validate the parameters of the RPC service method.
-        $this->validateMethodParams(
-            $params,
-            '{
-                "type": "object",
-                "properties": {
-                    "enable": { "type": "boolean" },
-                    "port": { "type": "integer", "minimum": 1024, "maximum": 65535 },
-                    "allowed_hosts": { "type": "string" }
-                }
-            }'
-        );
-
-        $object = [
-            "enable" => boolval($params["enable"]),
-            "port" => intval($params["port"]),
-            "allowed_hosts" => $params["allowed_hosts"],
-        ];
-
-        $this->save($object, $this->getStreamdevXpath());
-
-        return $object;
+        $this->database->set($object);
+        $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->eventMessagePath);
     }
 
+    /**
+     * Get the VDRAdmin-AM settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function getVdradminamSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->vdradminamDataModelPath);
 
-        // Get the configuration object
-        $object = $this->load($this->getVdradminamXpath());
-
-        $object["enable"] = boolval($object["enable"]);
-        $object["port"] = intval($object["port"]);
-
-        return $object;
+        return $object->getAssoc();
     }
 
+    /**
+     * Set VDRAdmin-AM settings.
+     *
+     * @param array $params  The method paramaters.
+     * @param array $context The context of the caller.
+     * @return array
+     */
     public function setVdradminamSettings($params, $context)
     {
-        global $xmlConfig;
+        $this->validateMethodContext($context, ['role' => OMV_ROLE_ADMINISTRATOR]);
+        $this->validateMethodParams($params, 'rpc.vdr.extras.setvdradminamsettings');
 
-        // Validate the RPC caller context.
-        $this->validateMethodContext($context, [
-            "role" => OMV_ROLE_ADMINISTRATOR
-        ]);
+        $object = $this->database->get($this->vdradminamDataModelPath);
+        $object->setAssoc($params);
 
-        // Validate the parameters of the RPC service method.
-        $this->validateMethodParams(
-            $params,
-            '{
-                "type": "object",
-                "properties": {
-                    "enable": { "type": "boolean" },
-                    "port": { "type": "integer", "minimum": 1024, "maximum": 65535 }
-                }
-            }'
-        );
-
-        $object = [
-            "enable" => boolval($params["enable"]),
-            "port" => intval($params["port"]),
-        ];
-
-        $this->save($object, $this->getVdradminamXpath());
-        $this->notify($this->getVdradminamEventMessagePath());
-
-        return $object;
-    }
-
-    private function load($xpath)
-    {
-        global $xmlConfig;
-
-        $object = $xmlConfig->get($xpath);
-
-        if (is_null($object)) {
-            throw new OMVException(
-                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $xpath
-            );
-        }
-
-        return $object;
-    }
-
-    private function save($object, $xpath)
-    {
-        global $xmlConfig;
-
-        if ($xmlConfig->replace($xpath, $object) === false) {
-            throw new OMVException(OMVErrorMsg::E_CONFIG_SET_OBJECT_FAILED);
-        }
-
-        $this->notify($this->getVdrEventMessagePath());
-
-        return $object;
-    }
-
-    private function notify($eventPath, $object = null)
-    {
-        $dispatcher = &OMVNotifyDispatcher::getInstance();
-        $dispatcher->notify(
-            OMV_NOTIFY_MODIFY,
-            $eventPath,
-            $object
-        );
+        $this->database->set($object);
+        $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->eventMessagePath);
+        $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->vdradminamEventMessagePath);
     }
 }
-
-// Register the RPC service.
-$rpcServiceMgr = &OMVRpcServiceMgr::getInstance();
-$rpcServiceMgr->registerService(new OMVRpcServiceVdrExtras());

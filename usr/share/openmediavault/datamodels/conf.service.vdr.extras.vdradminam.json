@@ -1,0 +1,21 @@
+{
+    "type": "config",
+    "id": "conf.service.vdr.extras.vdradminam",
+    "title": "VDR VDRAdmin-AM",
+    "queryinfo": {
+        "xpath": "/config/services/vdrextras/vdradminam",
+        "iterable": false
+    },
+    "properties": {
+        "enable": {
+            "type": "boolean",
+            "default": false
+        },
+        "port": {
+            "type": "integer",
+            "minimum": 1024,
+            "maximum": 65535,
+            "default": 8001
+        }
+    }
+}
