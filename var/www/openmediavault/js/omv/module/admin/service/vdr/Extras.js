@@ -21,24 +21,24 @@
 // require("js/omv/module/admin/service/vdr/extras/Streamdev.js")
 // require("js/omv/module/admin/service/vdr/extras/Vdradminam.js")
 
-Ext.define("OMV.module.admin.service.vdr.Extras", {
-    extend: "OMV.workspace.tab.Panel",
+Ext.define('OMV.module.admin.service.vdr.Extras', {
+    extend: 'OMV.workspace.tab.Panel',
     requires: [
-        "OMV.module.admin.service.vdr.extras.Live",
-        "OMV.module.admin.service.vdr.extras.Streamdev",
-        "OMV.module.admin.service.vdr.extras.Vdradminam"
+        'OMV.module.admin.service.vdr.extras.Live',
+        'OMV.module.admin.service.vdr.extras.Streamdev',
+        'OMV.module.admin.service.vdr.extras.Vdradminam'
     ],
     initComponent: function() {
         Ext.apply(this, {
             items: [
-                Ext.create("OMV.module.admin.service.vdr.extras.Live", {
-                    title: _("LIVE")
+                Ext.create('OMV.module.admin.service.vdr.extras.Live', {
+                    title: _('LIVE')
                 }),
-                Ext.create("OMV.module.admin.service.vdr.extras.Streamdev", {
-                    title: _("Streamdev")
+                Ext.create('OMV.module.admin.service.vdr.extras.Streamdev', {
+                    title: _('Streamdev')
                 }),
-                Ext.create("OMV.module.admin.service.vdr.extras.Vdradminam", {
-                    title: _("VDRAdmin-AM")
+                Ext.create('OMV.module.admin.service.vdr.extras.Vdradminam', {
+                    title: _('VDRAdmin-AM')
                 })
             ]
         });
@@ -48,9 +48,9 @@ Ext.define("OMV.module.admin.service.vdr.Extras", {
 });
 
 OMV.WorkspaceManager.registerPanel({
-    id: "extras",
-    path: "/service/vdr",
-    text: _("Extras"),
+    id: 'extras',
+    path: '/service/vdr',
+    text: _('Extras'),
     position: 100,
-    className: "OMV.module.admin.service.vdr.Extras"
+    className: 'OMV.module.admin.service.vdr.Extras'
 });

@@ -18,29 +18,29 @@
 // require("js/omv/WorkspaceManager.js")
 // require("js/omv/module/admin/service/vdr/extras/Base.js")
 
-Ext.define("OMV.module.admin.service.vdr.extras.Streamdev", {
-    extend: "OMV.module.admin.service.vdr.extras.Base",
+Ext.define('OMV.module.admin.service.vdr.extras.Streamdev', {
+    extend: 'OMV.module.admin.service.vdr.extras.Base',
 
-    rpcGetMethod: "getStreamdevSettings",
-    rpcSetMethod: "setStreamdevSettings",
+    rpcGetMethod: 'getStreamdevSettings',
+    rpcSetMethod: 'setStreamdevSettings',
 
     getFormItems: function() {
         return [{
-            xtype: "fieldset",
-            title: _("General settings"),
+            xtype: 'fieldset',
+            title: _('General settings'),
             fieldDefaults: {
-                labelSeparator: ""
+                labelSeparator: ''
             },
             items: [{
-                xtype: "checkbox",
-                name: "enable",
-                fieldLabel: _("Enable"),
+                xtype: 'checkbox',
+                name: 'enable',
+                fieldLabel: _('Enable'),
                 checked: false
             }, {
-                xtype: "numberfield",
-                name: "port",
-                fieldLabel: _("Port"),
-                vtype: "port",
+                xtype: 'numberfield',
+                name: 'port',
+                fieldLabel: _('Port'),
+                vtype: 'port',
                 minValue: 1024,
                 maxValue: 65535,
                 allowDecimals: false,
@@ -48,9 +48,9 @@ Ext.define("OMV.module.admin.service.vdr.extras.Streamdev", {
                 allowBlank: false,
                 value: 3000
             }, {
-                xtype: "textfield",
-                name: "allowed_hosts",
-                fieldLabel: _("Allowed hosts"),
+                xtype: 'textfield',
+                name: 'allowed_hosts',
+                fieldLabel: _('Allowed hosts'),
                 allowBlank: false
             }]
         }];

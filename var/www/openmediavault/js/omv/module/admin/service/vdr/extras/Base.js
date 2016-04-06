@@ -18,10 +18,10 @@
 // require("js/omv/WorkspaceManager.js")
 // require("js/omv/workspace/form/Panel.js")
 
-Ext.define("OMV.module.admin.service.vdr.extras.Base", {
-    extend: "OMV.workspace.form.Panel",
+Ext.define('OMV.module.admin.service.vdr.extras.Base', {
+    extend: 'OMV.workspace.form.Panel',
 
-    rpcService: "VdrExtras",
+    rpcService: 'VdrExtras',
 
     webInterfaceEncrypted: false,
 
@@ -29,20 +29,20 @@ Ext.define("OMV.module.admin.service.vdr.extras.Base", {
         var items = this.callParent(arguments);
 
         items.push({
-            id: this.getId() + "-show",
-            xtype: "button",
-            text: _("Show"),
-            icon: "images/search.png",
-            iconCls: Ext.baseCSSPrefix + "btn-icon-16x16",
+            id: this.getId() + '-show',
+            xtype: 'button',
+            text: _('Show'),
+            icon: 'images/search.png',
+            iconCls: Ext.baseCSSPrefix + 'btn-icon-16x16',
             scope: this,
             handler: function() {
-                var protocol = this.webInterfaceEncrypted ? "https" : "http";
+                var protocol = this.webInterfaceEncrypted ? 'https' : 'http';
                 var hostname = location.hostname;
                 var port = this.getWebInterfacePort();
 
-                var link = Ext.String.format("{0}://{1}:{2}", protocol, hostname, port);
+                var link = Ext.String.format('{0}://{1}:{2}', protocol, hostname, port);
 
-                window.open(link, "_blank");
+                window.open(link, '_blank');
             }
         });
 
@@ -50,6 +50,6 @@ Ext.define("OMV.module.admin.service.vdr.extras.Base", {
     },
 
     getWebInterfacePort: function() {
-        return this.getForm().findField("port").getValue();
+        return this.getForm().findField('port').getValue();
     }
 });

@@ -19,36 +19,36 @@
 // require("js/omv/module/admin/service/vdr/extras/Base.js")
 // require("js/omv/form/field/plugin/FieldInfo.js")
 
-Ext.define("OMV.module.admin.service.vdr.extras.Vdradminam", {
-    extend: "OMV.module.admin.service.vdr.extras.Base",
+Ext.define('OMV.module.admin.service.vdr.extras.Vdradminam', {
+    extend: 'OMV.module.admin.service.vdr.extras.Base',
     requires: [
-        "OMV.form.field.plugin.FieldInfo"
+        'OMV.form.field.plugin.FieldInfo'
     ],
 
-    rpcGetMethod: "getVdradminamSettings",
-    rpcSetMethod: "setVdradminamSettings",
+    rpcGetMethod: 'getVdradminamSettings',
+    rpcSetMethod: 'setVdradminamSettings',
 
     getFormItems: function() {
         return [{
-            xtype: "fieldset",
-            title: _("General settings"),
+            xtype: 'fieldset',
+            title: _('General settings'),
             fieldDefaults: {
-                labelSeparator: ""
+                labelSeparator: ''
             },
             items: [{
-                xtype: "checkbox",
-                name: "enable",
-                fieldLabel: _("Enable"),
+                xtype: 'checkbox',
+                name: 'enable',
+                fieldLabel: _('Enable'),
                 checked: false,
                 plugins: [{
-                    ptype: "fieldinfo",
-                    text: _("The default username and password is 'linvdr' and 'linvdr'.")
+                    ptype: 'fieldinfo',
+                    text: _('The default username and password is "linvdr" and "linvdr".')
                 }]
             }, {
-                xtype: "numberfield",
-                name: "port",
-                fieldLabel: _("Port"),
-                vtype: "port",
+                xtype: 'numberfield',
+                name: 'port',
+                fieldLabel: _('Port'),
+                vtype: 'port',
                 minValue: 1024,
                 maxValue: 65535,
                 allowDecimals: false,
