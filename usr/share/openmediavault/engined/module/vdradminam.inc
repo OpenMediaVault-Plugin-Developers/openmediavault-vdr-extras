@@ -115,6 +115,7 @@ class Vdradminam extends ServiceAbstract implements
      * Bind listeners.
      *
      * @param Dispatcher $dispatcher
+     *
      * @return void
      */
     public function bindListeners(Dispatcher $dispatcher)

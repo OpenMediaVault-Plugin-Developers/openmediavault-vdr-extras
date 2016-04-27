@@ -82,6 +82,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function getLiveSettings($params, $context)
@@ -98,6 +99,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function setLiveSettings($params, $context)
@@ -117,6 +119,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function getStreamdevSettings($params, $context)
@@ -133,6 +136,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function setStreamdevSettings($params, $context)
@@ -152,6 +156,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function getVdradminamSettings($params, $context)
@@ -168,6 +173,7 @@ class VdrExtras extends ServiceAbstract
      *
      * @param array $params  The method paramaters.
      * @param array $context The context of the caller.
+     *
      * @return array
      */
     public function setVdradminamSettings($params, $context)
