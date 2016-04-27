@@ -37,7 +37,7 @@ class Vdradminam extends ServiceAbstract implements
     private $dataModelPath = 'conf.service.vdr.extras.vdradminam';
 
     /** @var string */
-    private $eventMessagePath = 'org.openmediavault.services.vdr.extras.vdradminam';
+    private $eventMessagePath = 'org.openmediavault.conf.service.vdr.extras.vdradminam';
 
     /** @var string */
     private $serviceName = 'vdradmin-am.service';

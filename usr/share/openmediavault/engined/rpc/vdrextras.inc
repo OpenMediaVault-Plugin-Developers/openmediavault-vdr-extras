@@ -32,7 +32,7 @@ class VdrExtras extends ServiceAbstract
     private $dispatcher;
 
     /** @var string */
-    private $eventMessagePath = 'org.openmediavault.services.vdr';
+    private $eventMessagePath = 'org.openmediavault.conf.service.vdr';
 
     /** @var string */
     private $liveDataModelPath = 'conf.service.vdr.extras.live';
@@ -44,7 +44,7 @@ class VdrExtras extends ServiceAbstract
     private $vdradminamDataModelPath = 'conf.service.vdr.extras.vdradminam';
 
     /** @var string */
-    private $vdradminamEventMessagePath = 'org.openmediavault.services.vdr.extras.vdradminam';
+    private $vdradminamEventMessagePath = 'org.openmediavault.conf.service.vdr.extras.vdradminam';
 
     public function __construct(Database $database = null, Dispatcher $dispatcher = null)
     {
