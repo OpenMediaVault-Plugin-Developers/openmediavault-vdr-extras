@@ -43,9 +43,6 @@ class VdrExtras extends ServiceAbstract
     /** @var string */
     private $vdradminamDataModelPath = 'conf.service.vdr.extras.vdradminam';
 
-    /** @var string */
-    private $vdradminamEventMessagePath = 'org.openmediavault.conf.service.vdr.extras.vdradminam';
-
     public function __construct(Database $database = null, Dispatcher $dispatcher = null)
     {
         $this->database = $database ? $database : Database::getInstance();
@@ -186,6 +183,5 @@ class VdrExtras extends ServiceAbstract
 
         $this->database->set($object);
         $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->eventMessagePath);
-        $this->dispatcher->notify(OMV_NOTIFY_MODIFY, $this->vdradminamEventMessagePath);
     }
 }

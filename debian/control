@@ -8,7 +8,7 @@ XB-Plugin-Section: multimedia
 
 Package: openmediavault-vdr-extras
 Architecture: all
-Depends: openmediavault (>= 3.0.15),
+Depends: openmediavault (>= 3.0.21),
          openmediavault-vdr (>= 3.0.3),
          vdr-plugin-epgsearch,
          vdr-plugin-live,
