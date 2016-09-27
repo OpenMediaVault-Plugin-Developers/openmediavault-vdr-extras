@@ -19,26 +19,26 @@ case "$1" in
         SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
 
         if ! omv_config_exists "${SERVICE_XPATH}"; then
-            omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
+            omv_config_add_node "/config/services" "${SERVICE_XPATH_NAME}"
         fi
 
         if ! omv_config_exists "${SERVICE_XPATH}/live"; then
-            omv_config_add_element "${SERVICE_XPATH}" "live"
-            omv_config_add_element "${SERVICE_XPATH}/live" "enable" "0"
-            omv_config_add_element "${SERVICE_XPATH}/live" "port" "8008"
+            omv_config_add_node "${SERVICE_XPATH}" "live"
+            omv_config_add_key "${SERVICE_XPATH}/live" "enable" "0"
+            omv_config_add_key "${SERVICE_XPATH}/live" "port" "8008"
         fi
 
         if ! omv_config_exists "${SERVICE_XPATH}/streamdev"; then
-            omv_config_add_element "${SERVICE_XPATH}" "streamdev"
-            omv_config_add_element "${SERVICE_XPATH}/streamdev" "enable" "0"
-            omv_config_add_element "${SERVICE_XPATH}/streamdev" "port" "3000"
-            omv_config_add_element "${SERVICE_XPATH}/streamdev" "allowed_hosts" "192.168.1.0/24"
+            omv_config_add_node "${SERVICE_XPATH}" "streamdev"
+            omv_config_add_key "${SERVICE_XPATH}/streamdev" "enable" "0"
+            omv_config_add_key "${SERVICE_XPATH}/streamdev" "port" "3000"
+            omv_config_add_key "${SERVICE_XPATH}/streamdev" "allowed_hosts" "192.168.1.0/24"
         fi
 
         if ! omv_config_exists "${SERVICE_XPATH}/vdradminam"; then
-            omv_config_add_element "${SERVICE_XPATH}" "vdradminam"
-            omv_config_add_element "${SERVICE_XPATH}/vdradminam" "enable" "0"
-            omv_config_add_element "${SERVICE_XPATH}/vdradminam" "port" "8001"
+            omv_config_add_node "${SERVICE_XPATH}" "vdradminam"
+            omv_config_add_key "${SERVICE_XPATH}/vdradminam" "enable" "0"
+            omv_config_add_key "${SERVICE_XPATH}/vdradminam" "port" "8001"
         fi
 
         # Activate package triggers. These triggers are only set during the
